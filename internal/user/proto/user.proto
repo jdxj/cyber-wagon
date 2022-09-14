@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+option go_package = "github.com/jdxj/cyber-wagon/user/proto";
+
+service User {
+  rpc SignUp(SignUpReq) returns (SignUpRsp);
+  rpc AuthBasic(AuthBasicReq) returns (AuthBasicRsp);
+}
+
+message SignUpReq {
+  string email = 1;
+  string password = 2;
+  string nickname = 3;
+}
+
+message SignUpRsp {
+  uint64 user_id = 1;
+}
+
+message AuthBasicReq {
+  string email = 1;
+  string password = 2;
+}
+
+message AuthBasicRsp {
+  bool allow = 1;
+}

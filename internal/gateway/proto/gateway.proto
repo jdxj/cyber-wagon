@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+option go_package = "github.com/jdxj/cyber-wagon/gateway";
+
+service Gateway {
+  rpc Login(LoginReq) returns (LoginRsp);
+  rpc Logout(LogoutReq) returns (LogoutRsp);
+}
+
+message LoginReq {
+  enum AuthMethod {
+    EMAIL = 0;
+  }
+  string id = 1;
+  string password = 2;
+}
+
+message LoginRsp {
+  string token = 1;
+  uint64 user_id = 2;
+}
+
+message LogoutReq {
+
+}
+
+message LogoutRsp {
+
+}

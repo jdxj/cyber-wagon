@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option go_package = "github.com/jdxj/cyber-wagon/user/proto";
+
+message Error {
+  Code code = 1;
+  string msg = 2;
+}
+
+enum Code {
+  Default = 0;
+  DB_ERROR = 1;
+}
