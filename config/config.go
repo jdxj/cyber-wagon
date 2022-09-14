@@ -29,9 +29,14 @@ func GetDB() DB {
 	return c.DB
 }
 
+func GetRedis() Redis {
+	return c.Redis
+}
+
 type config struct {
-	Web Web `yaml:"web"`
-	DB  DB  `yaml:"db"`
+	Web   Web   `yaml:"web"`
+	DB    DB    `yaml:"db"`
+	Redis Redis `yaml:"redis"`
 }
 
 type Web struct {
@@ -45,6 +50,12 @@ type DB struct {
 	User   string `yaml:"user"`
 	Pass   string `yaml:"pass"`
 	DBName string `yaml:"db_name"`
+}
+
+type Redis struct {
+	Host string `yaml:"host"`
+	Port int    `yaml:"port"`
+	DB   int    `yaml:"db"`
 }
 
 func Init(filename string) {
