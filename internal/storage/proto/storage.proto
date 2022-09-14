@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option go_package = "github.com/jdxj/cyber-wagon/storage";
+
+service Storage {
+  rpc Upload(stream UploadReq) returns (UploadRsp);
+}
+
+message UploadReq {
+
+}
+
+message UploadRsp {
+
+}

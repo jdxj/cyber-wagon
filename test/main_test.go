@@ -2,12 +2,14 @@ package test
 
 import (
 	"context"
+	"crypto/sha512"
 	"fmt"
 	"testing"
 
 	"github.com/bwmarrin/snowflake"
 	"github.com/go-redis/redis/v9"
 	uuid "github.com/satori/go.uuid"
+	"golang.org/x/crypto/sha3"
 
 	"github.com/jdxj/cyber-wagon/config"
 )
@@ -47,4 +49,9 @@ func TestPingRedis(t *testing.T) {
 		t.Fatalf("%s\n", err)
 	}
 	fmt.Printf("id: %d\n", id)
+}
+
+func TestSha(t *testing.T) {
+	sha512.New()
+	sha3.New512()
 }
