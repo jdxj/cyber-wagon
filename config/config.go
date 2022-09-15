@@ -34,9 +34,10 @@ func GetRedis() Redis {
 }
 
 type config struct {
-	Web   Web   `yaml:"web"`
-	DB    DB    `yaml:"db"`
-	Redis Redis `yaml:"redis"`
+	Web     Web     `yaml:"web"`
+	DB      DB      `yaml:"db"`
+	Redis   Redis   `yaml:"redis"`
+	Storage Storage `yaml:"storage"`
 }
 
 type Web struct {
@@ -58,6 +59,10 @@ type Redis struct {
 	DB   int    `yaml:"db"`
 }
 
+type Storage struct {
+	Path string `yaml:"path"`
+}
+
 func Init(filename string) {
 	f, err := os.Open(filename)
 	if err != nil {
@@ -71,3 +76,5 @@ func Init(filename string) {
 		logrus.Fatalf("decode %s err: %s", filename, err)
 	}
 }
+
+// todo: cmd 中生成 example.yaml

@@ -2,8 +2,12 @@ package test
 
 import (
 	"context"
+	"crypto/rand"
 	"crypto/sha512"
+	"encoding/base32"
 	"fmt"
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/bwmarrin/snowflake"
@@ -54,4 +58,41 @@ func TestPingRedis(t *testing.T) {
 func TestSha(t *testing.T) {
 	sha512.New()
 	sha3.New512()
+}
+
+func TestFile(t *testing.T) {
+	filepath.Base("")
+	fmt.Printf("temp: %s\n", os.TempDir())
+	fi, err := os.Stat("abc/LPXVBJ6JYZY3FTL5")
+	if err != nil {
+		if os.IsNotExist(err) {
+			fmt.Printf("not exist")
+		}
+		t.Fatalf("%s\n", err)
+	}
+	fmt.Printf("%+v\n", fi)
+}
+
+func TestBase64(t *testing.T) {
+	buf := make([]byte, 10)
+	_, err := rand.Read(buf)
+	if err != nil {
+		t.Fatalf("%s\n", err)
+	}
+	s := base32.StdEncoding.EncodeToString(buf)
+	fmt.Printf("s: %s\n", s)
+}
+
+func TestMkdir(t *testing.T) {
+	err := os.Mkdir("test-create-dir", os.ModePerm)
+	if err != nil {
+		t.Fatalf("%s\n", err)
+	}
+}
+
+func TestRename(t *testing.T) {
+	err := os.Rename("abc", "test-create-dir/def")
+	if err != nil {
+		t.Fatalf("%s\n", err)
+	}
 }
