@@ -2,7 +2,6 @@ package model
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -39,11 +38,10 @@ func TestStorage_WriteFile(t *testing.T) {
 	}
 	defer f.Close()
 
-	fi, err := stg.WriteFile(context.Background(), 2, 2, "hello.test", f)
+	err = stg.WriteFile(context.Background(), 2, 2, "hello.test", f)
 	if err != nil {
 		t.Fatalf("%s\n", err)
 	}
-	fmt.Printf("file: %+v", fi)
 }
 
 func TestStorage_ReadFile(t *testing.T) {

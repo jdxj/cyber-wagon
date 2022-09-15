@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/base32"
 	"io"
+	"io/fs"
 	"os"
 	"strconv"
 	"time"
@@ -12,9 +13,8 @@ import (
 )
 
 type File interface {
-	io.Reader
-	io.ReadCloser
 	io.Seeker
+	fs.File
 }
 
 type FileInfo struct {

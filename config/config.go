@@ -21,10 +21,6 @@ var (
 	c = config{}
 )
 
-func GetWeb() Web {
-	return c.Web
-}
-
 func GetDB() DB {
 	return c.DB
 }
@@ -33,8 +29,11 @@ func GetRedis() Redis {
 	return c.Redis
 }
 
+func GetStorage() Storage {
+	return c.Storage
+}
+
 type config struct {
-	Web     Web     `yaml:"web"`
 	DB      DB      `yaml:"db"`
 	Redis   Redis   `yaml:"redis"`
 	Storage Storage `yaml:"storage"`
@@ -60,6 +59,7 @@ type Redis struct {
 }
 
 type Storage struct {
+	Web  Web    `yaml:"web"`
 	Path string `yaml:"path"`
 }
 
