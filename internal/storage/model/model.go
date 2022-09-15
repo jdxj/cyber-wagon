@@ -2,6 +2,7 @@ package model
 
 import (
 	"context"
+	"errors"
 	"io"
 	"os"
 	"path/filepath"
@@ -12,11 +13,15 @@ import (
 	"github.com/jdxj/cyber-wagon/internal/util"
 )
 
+var (
+	ErrFileNotFound = errors.New("file not found")
+)
+
 type Storage struct {
 	path string
 }
 
-func (s *Storage) WriteFile(ctx context.Context, fileID, userID uint64, filename string, r io.Reader) (*File, error) {
+func (s *Storage) WriteFile(ctx context.Context, fileID, userID uint64, filename string, r io.Reader) (*FileInfo, error) {
 	tmpPath := filepath.Join(os.TempDir(), tempName())
 	tmpFile, err := os.Create(tmpPath)
 	if err != nil {
@@ -60,16 +65,40 @@ func (s *Storage) WriteFile(ctx context.Context, fileID, userID uint64, filename
 		return nil, err
 	}
 
-	return &File{
+	return &FileInfo{
 		ID:        uint64(f.ID),
 		CreatedAt: f.CreatedAt,
 		Filename:  f.Filename,
 		UserID:    f.UserID,
 		MD5:       f.MD5,
+		path:      newPath,
 	}, nil
 }
 
-func (s *Storage) ReadFile() (io.ReadSeekCloser, error) {
-	// todo
-	return nil, nil
+func (s *Storage) ReadFile(ctx context.Context, fileID, userID uint64) (*FileInfo, error) {
+	f := &dao.File{
+		Model:  gorm.Model{ID: uint(fileID)},
+		UserID: userID,
+	}
+	err := util.DB.WithContext(ctx).
+		Take(f).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, ErrFileNotFound
+		}
+		return nil, err
+	}
+
+	if len(f.MD5) < 3 {
+		return nil, ErrFileNotFound
+	}
+
+	return &FileInfo{
+		ID:        uint64(f.ID),
+		CreatedAt: f.CreatedAt,
+		Filename:  f.Filename,
+		UserID:    f.UserID,
+		MD5:       f.MD5,
+		path:      filepath.Join(s.path, f.MD5[:3], f.MD5),
+	}, nil
 }

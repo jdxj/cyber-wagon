@@ -3,18 +3,32 @@ package model
 import (
 	"crypto/rand"
 	"encoding/base32"
+	"io"
+	"os"
 	"strconv"
 	"time"
 
 	"github.com/sirupsen/logrus"
 )
 
-type File struct {
+type File interface {
+	io.Reader
+	io.ReadCloser
+	io.Seeker
+}
+
+type FileInfo struct {
 	ID        uint64
 	CreatedAt time.Time
 	Filename  string
 	UserID    uint64
 	MD5       string
+
+	path string
+}
+
+func (fi *FileInfo) Open() (File, error) {
+	return os.Open(fi.path)
 }
 
 func tempName() string {
