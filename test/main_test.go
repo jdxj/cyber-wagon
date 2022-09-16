@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 	"time"
 
@@ -127,7 +128,7 @@ func TestRabbitMQ(t *testing.T) {
 }
 
 func TestProto(t *testing.T) {
-	msg := &gateway.Message{}
+	msg := &gateway.ClientMsg{}
 	fmt.Printf("%#v\n", msg.ProtoReflect().Descriptor().FullName())
 	fmt.Printf("%#v\n", msg.ProtoReflect().Descriptor().Name())
 
@@ -143,5 +144,14 @@ func TestProto(t *testing.T) {
 	data, err = proto.Marshal(a)
 	if err != nil {
 		t.Fatalf("%s\n", err)
+	}
+}
+
+func TestPC(t *testing.T) {
+	pc := make([]uintptr, 6)
+	n := runtime.Callers(0, pc)
+	f := runtime.CallersFrames(pc[:n])
+	for frame, ok := f.Next(); ok; frame, ok = f.Next() {
+		t.Logf("file: %s, line: %d\n", frame.File, frame.Line)
 	}
 }
