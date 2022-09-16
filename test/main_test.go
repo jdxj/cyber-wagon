@@ -9,9 +9,11 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/bwmarrin/snowflake"
 	"github.com/go-redis/redis/v9"
+	amqp "github.com/rabbitmq/amqp091-go"
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/sha3"
 
@@ -95,4 +97,28 @@ func TestRename(t *testing.T) {
 	if err != nil {
 		t.Fatalf("%s\n", err)
 	}
+}
+
+func TestFmt(t *testing.T) {
+}
+
+func TestRabbitMQ(t *testing.T) {
+	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	if err != nil {
+		t.Fatalf("%s\n", err)
+	}
+	defer conn.Close()
+
+	ch, err := conn.Channel()
+	if err != nil {
+		t.Fatalf("%s\n", err)
+	}
+	defer ch.Close()
+
+	queue, err := ch.QueueDeclare("hello", false, true, false, false, nil)
+	if err != nil {
+		t.Fatalf("%s\n", err)
+	}
+	_ = queue
+	time.Sleep(time.Hour)
 }
