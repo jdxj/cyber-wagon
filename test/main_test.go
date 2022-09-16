@@ -16,8 +16,11 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/sha3"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/anypb"
 
 	"github.com/jdxj/cyber-wagon/config"
+	gateway "github.com/jdxj/cyber-wagon/internal/gateway/proto"
 )
 
 func TestUUID(t *testing.T) {
@@ -121,4 +124,24 @@ func TestRabbitMQ(t *testing.T) {
 	}
 	_ = queue
 	time.Sleep(time.Hour)
+}
+
+func TestProto(t *testing.T) {
+	msg := &gateway.Message{}
+	fmt.Printf("%#v\n", msg.ProtoReflect().Descriptor().FullName())
+	fmt.Printf("%#v\n", msg.ProtoReflect().Descriptor().Name())
+
+	data, err := proto.Marshal(msg)
+	if err != nil {
+		t.Fatalf("%s\n", err)
+	}
+
+	a := &anypb.Any{
+		TypeUrl: string(msg.ProtoReflect().Descriptor().FullName()),
+		Value:   data,
+	}
+	data, err = proto.Marshal(a)
+	if err != nil {
+		t.Fatalf("%s\n", err)
+	}
 }

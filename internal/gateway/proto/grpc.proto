@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package gateway;
+option go_package = "github.com/jdxj/cyber-wagon/gateway";
+
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+
+service GRPC {
+  rpc Transport(stream ClientMsg) returns (stream ServerMsg);
+}
+
+message ClientMsg {
+  string uuid = 1;
+  string device = 2;
+  google.protobuf.Timestamp timestamp = 3;
+  string app_version = 4;
+
+  google.protobuf.Any data = 10;
+}
+
+message ServerMsg {
+  google.protobuf.Timestamp timestamp = 1;
+  google.protobuf.Any data = 10;
+}
