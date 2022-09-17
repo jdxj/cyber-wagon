@@ -33,10 +33,15 @@ func GetStorage() Storage {
 	return c.Storage
 }
 
+func GetRabbitmq() Rabbitmq {
+	return c.Rabbitmq
+}
+
 type config struct {
-	DB      DB      `yaml:"db"`
-	Redis   Redis   `yaml:"redis"`
-	Storage Storage `yaml:"storage"`
+	DB       DB       `yaml:"db"`
+	Redis    Redis    `yaml:"redis"`
+	Storage  Storage  `yaml:"storage"`
+	Rabbitmq Rabbitmq `yaml:"rabbitmq"`
 }
 
 type Web struct {
@@ -61,6 +66,13 @@ type Redis struct {
 type Storage struct {
 	Web  Web    `yaml:"web"`
 	Path string `yaml:"path"`
+}
+
+type Rabbitmq struct {
+	Host string `yaml:"host"`
+	Port int    `yaml:"port"`
+	User string `yaml:"user"`
+	Pass string `yaml:"pass"`
 }
 
 func Init(filename string) {

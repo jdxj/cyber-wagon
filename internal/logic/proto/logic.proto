@@ -22,5 +22,3 @@ message Ack {
 message C2CMsgRsp {
   repeated uint64 msg_ids = 1;
 }
-
-
