@@ -1,0 +1,26 @@
+syntax = "proto3";
+package logic;
+import "google/protobuf/any.proto";
+option go_package = "github.com/jdxj/cyber-wagon/logic";
+
+message Error {
+  int32 code = 1;
+  string msg = 2;
+}
+
+message C2CMsgReq {
+  uint64 msg_id = 1;
+  uint64 to = 2;
+  google.protobuf.Any data = 3;
+}
+
+message Ack {
+  Error error = 1;
+  repeated uint64 msg_ids = 2;
+}
+
+message C2CMsgRsp {
+  repeated uint64 msg_ids = 1;
+}
+
+
