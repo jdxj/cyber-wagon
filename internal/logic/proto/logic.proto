@@ -3,22 +3,29 @@ package logic;
 import "google/protobuf/any.proto";
 option go_package = "github.com/jdxj/cyber-wagon/logic";
 
-message Error {
-  int32 code = 1;
-  string msg = 2;
-}
+message C2CMsg {
+  enum Kind {
+    NONE = 0;
+    REQ_C_SRV = 1;
+    REQ_SYN_SRV_C = 2;
+    REQ_SRV_C = 3;
+  }
+  Kind kind = 1;
 
-message C2CMsgReq {
-  uint64 msg_id = 1;
-  uint64 to = 2;
-  google.protobuf.Any data = 3;
+  oneof user_id {
+    uint64 from = 2;
+    uint64 to = 3;
+  }
+
+  uint64 msg_id = 4;
+  google.protobuf.Any data = 5;
 }
 
 message Ack {
-  Error error = 1;
-  repeated uint64 msg_ids = 2;
-}
+  oneof user_id {
+    uint64 from = 1;
+    uint64 to = 2;
+  }
 
-message C2CMsgRsp {
-  repeated uint64 msg_ids = 1;
+  uint64 msg_id = 3;
 }
