@@ -8,10 +8,10 @@ import (
 )
 
 type Server struct {
-	gateway.UnimplementedGRPCServer
+	gateway.UnimplementedGatewayServer
 }
 
-func (s *Server) Transport(stream gateway.GRPC_TransportServer) error {
+func (s *Server) Transport(stream gateway.Gateway_TransportServer) error {
 	for {
 		cMsg, err := stream.Recv()
 		if err != nil {

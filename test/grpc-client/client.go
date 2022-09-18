@@ -13,9 +13,9 @@ import (
 )
 
 func main() {
-	var client gateway.GRPCClient
+	var client gateway.GatewayClient
 	closer, err := grpc.Connect("localhost:49152", func(cc grpc2.ClientConnInterface) {
-		client = gateway.NewGRPCClient(cc)
+		client = gateway.NewGatewayClient(cc)
 	})
 	if err != nil {
 		logrus.Fatalln(err)

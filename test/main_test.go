@@ -107,7 +107,7 @@ func TestFmt(t *testing.T) {
 }
 
 func TestRabbitMQ(t *testing.T) {
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	conn, err := amqp.Dial("amqp://guest:guest@192.168.50.200:5672/")
 	if err != nil {
 		t.Fatalf("%s\n", err)
 	}
@@ -119,11 +119,46 @@ func TestRabbitMQ(t *testing.T) {
 	}
 	defer ch.Close()
 
+	err = ch.ExchangeDeclare("test-ex", "topic", false, true, false, false, nil)
+	if err != nil {
+		t.Fatalf("%s\n", err)
+	}
+
 	queue, err := ch.QueueDeclare("hello", false, true, false, false, nil)
 	if err != nil {
 		t.Fatalf("%s\n", err)
 	}
-	_ = queue
+
+	err = ch.QueueBind(queue.Name, "hello_bk", "test-ex", false, nil)
+	if err != nil {
+		t.Fatalf("%s\n", err)
+	}
+
+	go func() {
+		for {
+			err := ch.PublishWithContext(context.Background(), "test-ex", "hello_bk", false,
+				false, amqp.Publishing{Body: []byte("def")})
+			if err != nil {
+				fmt.Printf("publish err: %s\n", err)
+			}
+			time.Sleep(time.Second)
+		}
+	}()
+
+	deliveryCh, err := ch.Consume(queue.Name, "", false, false, false, false, nil)
+	if err != nil {
+		t.Fatalf("%s\n", err)
+	}
+	go func() {
+		for d := range deliveryCh {
+			fmt.Printf("body: %s\n", d.Body)
+			err := d.Ack(false)
+			if err != nil {
+				fmt.Printf("ack err: %s", err)
+			}
+		}
+	}()
+
 	time.Sleep(time.Hour)
 }
 

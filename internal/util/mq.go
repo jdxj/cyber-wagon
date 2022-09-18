@@ -16,6 +16,9 @@ const (
 
 	LogicQueue      = "logic_q"
 	LogicBindingKey = "logic_bk"
+
+	PushQueue      = "push_q"
+	PushBindingKey = "push_bk"
 )
 
 var (
@@ -30,38 +33,41 @@ func InitMQ(cfg config.Rabbitmq) {
 	}
 	MQ = conn
 
-	createExchange()
-	createLogicQueue()
-}
-
-func createExchange() {
 	ch, err := MQ.Channel()
 	if err != nil {
 		logrus.Fatalln(err)
 	}
 	defer ch.Close()
 
-	err = ch.ExchangeDeclare(Exchange, Kind,
+	CreateExchange(ch, Exchange, Kind)
+	CreateQueue(ch, LogicQueue, LogicBindingKey)
+	CreateQueue(ch, PushQueue, PushBindingKey)
+}
+
+func NewChannel() *amqp.Channel {
+	ch, err := MQ.Channel()
+	if err != nil {
+		logrus.Fatalln(err)
+	}
+	return ch
+}
+
+func CreateExchange(ch *amqp.Channel, exchange, kind string) {
+	err := ch.ExchangeDeclare(exchange, kind,
 		true, false, false, false, nil)
 	if err != nil {
 		logrus.Fatalln(err)
 	}
 }
 
-func createLogicQueue() {
-	ch, err := MQ.Channel()
-	if err != nil {
-		logrus.Fatalln(err)
-	}
-	defer ch.Close()
-
-	q, err := ch.QueueDeclare(LogicQueue,
+func CreateQueue(ch *amqp.Channel, queue, bindingKey string) {
+	q, err := ch.QueueDeclare(queue,
 		true, false, false, false, nil)
 	if err != nil {
 		logrus.Fatalln(err)
 	}
 
-	err = ch.QueueBind(q.Name, LogicBindingKey, Exchange, false, nil)
+	err = ch.QueueBind(q.Name, bindingKey, Exchange, false, nil)
 	if err != nil {
 		logrus.Fatalln(err)
 	}
